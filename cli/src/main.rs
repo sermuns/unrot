@@ -1,6 +1,9 @@
 use clap::Parser;
 use std::path::PathBuf;
-use unrot_core::{DEFAULT_IGNORE, find_broken_symlinks, find_candidates};
+use unrot_core::{
+    BrokenSymlink, DEFAULT_IGNORE, RepairCase, TerminalIO, find_broken_symlinks, find_candidates,
+    run,
+};
 
 fn main() {
     let Args {
@@ -8,6 +11,7 @@ fn main() {
         path,
         search_root,
         ignore,
+        dry_run,
     } = Args::parse();
 
     let path = if path.as_os_str() == "." {
@@ -30,22 +34,31 @@ fn main() {
         return;
     }
 
-    for link in &broken {
-        println!("{link}");
-        let candidates = find_candidates(link, &search_root, &all_ignore);
-        if candidates.is_empty() {
-            println!("  no candidates found");
-        } else {
-            for (i, candidate) in candidates.iter().enumerate() {
-                println!(
-                    "  [{}] {} (score: {:.2})",
-                    i + 1,
-                    candidate.path.display(),
-                    candidate.score
-                );
+    let cases: Vec<RepairCase> = broken
+        .into_iter()
+        .map(|b| {
+            let candidates = find_candidates(&b, &search_root, &all_ignore);
+            let BrokenSymlink { link, target } = b;
+            RepairCase::new(link, target, candidates)
+        })
+        .collect();
+
+    if cases.is_empty() {
+        println!("no broken symlinks found");
+        return;
+    }
+
+    let mut io = TerminalIO;
+    match run(&cases, &mut io, dry_run) {
+        Ok(summary) => {
+            if summary.total() > 0 {
+                println!("{summary}");
             }
         }
-        println!();
+        Err(e) => {
+            eprintln!("error: {e}");
+            std::process::exit(1);
+        }
     }
 }
 
@@ -65,4 +78,8 @@ struct Args {
     /// Additional directory names to ignore during walks
     #[arg(short = 'I', long)]
     ignore: Vec<String>,
+
+    /// Preview changes without modifying the filesystem
+    #[arg(short, long)]
+    dry_run: bool,
 }
