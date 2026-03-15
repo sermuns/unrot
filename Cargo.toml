@@ -4,9 +4,11 @@ resolver = "3"
 
 [workspace.package]
 edition = "2024"
-rust-version = "1.93"
-license = "MIT, APACHE-2.0"
+rust-version = "1.94"
+license = "MIT OR Apache-2.0"
+authors = ["Akrm Al-Hakimi <alhakimiakrmj@gmail.com>"]
 repository = "https://github.com/cachebag/unrot"
+homepage = "https://github.com/cachebag/unrot"
 
 [profile.bench]
 debug = true

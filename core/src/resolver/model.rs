@@ -53,11 +53,6 @@ pub enum Action {
     Skip,
 }
 
-pub struct Resolution {
-    pub link: PathBuf,
-    pub action: Action,
-}
-
 #[derive(Debug, Default)]
 pub struct Summary {
     pub relinked: usize,
@@ -123,16 +118,6 @@ mod tests {
             }],
         );
         assert!(case.has_candidates());
-    }
-
-    #[test]
-    fn resolution_pairs_link_with_action() {
-        let Resolution { link, action } = Resolution {
-            link: "/some/link".into(),
-            action: Action::Remove,
-        };
-        assert_eq!(link, PathBuf::from("/some/link"));
-        assert_eq!(action, Action::Remove);
     }
 
     #[test]

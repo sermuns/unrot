@@ -1,7 +1,16 @@
 [package]
-name = "unrot_cli"
+name = "unrot"
 version = "0.1.0"
-edition = "2024"
+description = "Find and interactively repair broken symlinks with fuzzy matching"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation = "https://github.com/cachebag/unrot"
+keywords = ["symlink", "broken-symlink", "fuzzy-matching", "filesystem", "cli"]
+categories = ["command-line-utilities", "filesystem"]
 
 [[bin]]
 name = "unrot"
@@ -9,4 +18,4 @@ path = "src/main.rs"
 
 [dependencies]
 clap = { version = "4.6.0", features = ["derive"] }
-unrot_core = { path = "../core" }
+unrot_core = { version = "0.1.0", path = "../core" }

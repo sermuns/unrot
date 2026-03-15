@@ -8,7 +8,7 @@ use crate::scanner::BrokenSymlink;
 //
 // We could easily use a library for this, but it's trivial
 // enough in our case to where it's not worth the dependency here.
-pub fn levenshtein(a: &str, b: &str) -> usize {
+pub(crate) fn levenshtein(a: &str, b: &str) -> usize {
     let a: Vec<char> = a.chars().collect();
     let b: Vec<char> = b.chars().collect();
     let (m, n) = (a.len(), b.len());
@@ -46,7 +46,7 @@ fn dir_components(path: &Path) -> Vec<String> {
         .collect()
 }
 
-pub fn score_candidate(broken: &BrokenSymlink, candidate: &Path, search_root: &Path) -> f64 {
+fn score_candidate(broken: &BrokenSymlink, candidate: &Path, search_root: &Path) -> f64 {
     let target_name = broken
         .target
         .file_name()
